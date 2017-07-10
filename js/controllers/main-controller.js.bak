@@ -1,0 +1,177 @@
+app.controller('mainController', ['$rootScope',
+'$scope'
+,'$stateParams'
+,'$state'
+,'$timeout'
+,'lodash'
+,'moment'
+,function(
+	$rootScope
+	,$scope
+	,$stateParams
+	,$state
+	,$timeout
+	,lodash
+	,moment
+) {
+
+	//==========================================================================
+	// Loading indicator
+	//==========================================================================
+	$rootScope.appLoading = false;
+
+	$rootScope.$on('loading:progress', function (){
+		$rootScope.appLoading = true;
+	});
+
+	$rootScope.$on('loading:finish', function (){
+		$rootScope.appLoading = false;
+	});
+
+	//==========================================================================
+	// Application-wide messages
+	//==========================================================================
+
+	$rootScope.applicationMessage = {
+		message: false,
+		type: false
+	}
+
+	$rootScope.displayMessage = function(message, type){
+		// $log.debug('displayMessage', message, type)
+		//solo cuando se establece 'danger',
+		//se parsean los errores provenientes del core
+		if(type == 'danger'){
+			message = processErrors(message)
+		}
+
+		$rootScope.applicationMessage.message = message;
+		$rootScope.applicationMessage.type = type;
+
+		$timeout(function(){
+			$rootScope.applicationMessage.msg = false
+			$rootScope.closeApplicationMessage()
+		}, 3000);
+	}
+
+	$rootScope.changesSaved = function(){
+		$rootScope.appChangesSaved = true
+		$timeout(function(){
+			$rootScope.applicationMessage.msg = false
+			$rootScope.appChangesSaved = false
+		}, 1500);
+	}
+
+	$rootScope.closeApplicationMessage = function(){
+		$rootScope.applicationMessage.message = false;
+		$rootScope.applicationMessage.type = false;
+	}
+
+	var processErrors = function(errors){
+		if(errors.data.code == 400){
+			var data = errors.data.validation_errors
+			errors = Object.keys(data).reduce(function(errorList, field){
+				data[field].map(function(m){
+					errorList += `<li>${m.message}</li>`
+				})
+				return errorList
+			} , '')
+			errors = `<ul>${errors}<ul/>`
+		}
+		return errors
+	}
+
+	$rootScope.$on('$stateNotFound', function(event) {
+		$log.error('state not found', event)
+		event.preventDefault();
+		$state.go('root');
+	});
+
+	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+		var requireLogin = toState.data.requireLogin
+		$rootScope.currentUser =
+		typeof localStorage.currentUser === 'undefined' ? false : JSON.parse(localStorage.currentUser)
+
+	});
+
+	//==========================================================================
+	// Helper functions
+	//==========================================================================
+	//returns an array of numbers from init to end
+	$rootScope.range = function(init, end){
+		var arr = []
+		if(init > end){return arr}
+		for (var i = init; i <= end; i++) { arr.push(i) }
+		return arr
+	}
+
+	$scope.offsets = [
+		'-12'
+		,'-11'
+		,'-10'
+		,'-09'
+		,'-08'
+		,'-07'
+		,'-06'
+		,'-05'
+		,'-04'
+		,'-03'
+		,'-02'
+		,'-01'
+		,'+00'
+		,'+01'
+		,'+02'
+		,'+03'
+		,'+04'
+		,'+05'
+		,'+06'
+		,'+07'
+		,'+08'
+		,'+09'
+		,'+10'
+		,'+11'
+		,'+12'
+]
+
+	$scope.updateDate = function(){
+		// console.log('updating date');
+		// console.log('tmpDay',$scope.tmpDay);
+		// console.log('tmpMonth',$scope.tmpMonth);
+		// console.log('tmpYear',$scope.tmpYear);
+		// console.log('tmpHour',$scope.tmpHour);
+		// console.log('tmpMinute',$scope.tmpMinute);
+
+		$scope.date.date($scope.tmpDay)
+		$scope.date.month(parseInt($scope.tmpMonth))
+		$scope.date.year($scope.tmpYear)
+		$scope.date.hour($scope.tmpHour)
+		$scope.date.minute($scope.tmpMinute)
+
+		$scope.calculated = $scope.offsets.map(function(os){
+			return [os + ':00', moment($scope.date).utcOffset(os + ':00').format('HH:mm')]
+		})
+	}
+
+	$scope.days = $rootScope.range(1,31)
+	$scope.months = $rootScope.range(0,11)
+	$scope.years = $rootScope.range(2017,2020)
+	$scope.hours = $rootScope.range(0,24)
+	$scope.minutes = ['00', '15', '30', '45']
+
+	$scope.date = moment()
+
+	$scope.tmpDay = $scope.date.date()
+	$scope.tmpMonth = $scope.date.month()
+	$scope.tmpYear = $scope.date.year()
+	$scope.tmpHour = $scope.date.hour()
+	$scope.tmpMinute =  $scope.date.minute()
+
+	$scope.updateDate()
+
+	// console.log($scope.date);
+	// console.log($scope.tmpDay);
+	// console.log($scope.tmpMonth);
+	// console.log($scope.tmpYear);
+	// console.log($scope.tmpHour);
+	// console.log($scope.tmpMinute);
+}]);
