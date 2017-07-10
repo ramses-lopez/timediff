@@ -1,43 +1,46 @@
 <div class="section">
 	<div class="container">
-		<div class="row text-center">
-			<h3 class="">{{date.format('DD/MM/YYYY HH:mm Z')}}</h3>
-
-
-			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-log-4">
+		<div class="row">
+			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 				<select class="form-control" ng-change="updateDate()" ng-model="tmpDay">
 					<option ng-repeat="v in days" value="{{v}}">{{v}}</option>
 				</select>
 			</div>
-			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-log-4">
+			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 				<select class="form-control" ng-change="updateDate()" ng-model="tmpMonth">
 					<option ng-repeat="v in months">{{v}}</option>
 				</select>
 			</div>
-			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-log-4">
+			<div ng-hide=true class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 				<select class="form-control" ng-change="updateDate()" ng-model="tmpYear">
 					<option ng-repeat="v in years">{{v}}</option>
 				</select>
 			</div>
 
-			<div class="col-xs-6 col-sm-6 col-md-6 col-log-6">
-				<select class="form-control" ng-change="updateDate()" ng-model="tmpHour">
-					<option ng-repeat="v in hours">{{v}}</option>
-				</select>
+			<div class="text-center">
+				<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+					<select class="form-control" ng-change="updateDate()" ng-model="tmpHour">
+						<option ng-repeat="v in hours">{{v}}</option>
+					</select>
+				</div>
+				<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+					<select class="form-control" ng-change="updateDate()" ng-model="tmpMinute">
+						<option ng-repeat="v in minutes" value='{{v}}'>{{v}}</option>
+					</select>
+				</div>				
 			</div>
-			<div class="col-xs-6 col-sm-6 col-md-6 col-log-6">
-				<select class="form-control" ng-change="updateDate()" ng-model="tmpMinute">
-					<option ng-repeat="v in minutes" value='{{v}}'>{{v}}</option>
-				</select>
-			</div>
+	</div>
 
+	<div class="row text-center">
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<h3>{{date.format('DD/MM/YYYY HH:mm Z')}}</h3>
 			<table class="table table-condensed table-striped">
-				<thead>
+				<!-- <thead>
 					<tr>
 						<th class="text-center"> Offset </th>
 						<th class="text-center"> Time </th>
 					</tr>
-				</thead>
+				</thead> -->
 				<tbody>
 					<tr ng-repeat="os in calculated">
 						<td class="text-center"> {{os[0]}} </td>
@@ -45,5 +48,7 @@
 					</tr>
 				</tbody>
 			</table>
+		</div>
 	</div>
+
 </div>
